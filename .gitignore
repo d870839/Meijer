@@ -4,7 +4,11 @@ __pycache__/
 *.pyc
 *.pyo
 results.csv
-results-*.csv
+# Snapshots and history are kept by design (price-over-time data).
+# Comment these in if you'd rather not track them:
+# snapshots/
+# history.csv
+payload-*.json
 .playwright/
 .DS_Store
 .idea/

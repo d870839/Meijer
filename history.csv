@@ -1,0 +1,4 @@
+trade_name,search_query,rank,matched_name,price,size,unit_price,unit_price_basis,url,status,date,timestamp
+CELERY,celery,1,Fresh from Meijer Pascal Celery,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T15:04:40Z
+CELERY,celery,2,Fresh from Meijer Pascal Celery,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T15:04:40Z
+CELERY,celery,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:04:40Z

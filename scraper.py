@@ -28,7 +28,7 @@ import json
 import re
 import sys
 from dataclasses import dataclass, asdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -48,35 +48,87 @@ SIZE_RE = re.compile(
     r"(\d+(?:\.\d+)?\s?(?:lb|oz|ct|count|each|ea|pk|pack|pint|qt|gal|fl\s?oz|kg|g))",
     re.IGNORECASE,
 )
+# Captures "$2.49/lb", "$0.16 / oz", etc. — Meijer's tile-shown unit price.
+UNIT_PRICE_RE = re.compile(
+    r"\$\s?(\d+(?:\.\d{1,2})?)\s*/\s*(lb|oz|ea|each|count|ct|kg|g|pint|qt|gal|fl\s?oz|ml|l)\b",
+    re.IGNORECASE,
+)
+# Same idea but for "($0.16/oz)" parenthetical variants without a leading $/.
+UNIT_PRICE_PAREN_RE = re.compile(
+    r"\(\s*\$?\s?(\d+(?:\.\d{1,2})?)\s*/\s*(lb|oz|ea|each|count|ct|kg|g)\s*\)",
+    re.IGNORECASE,
+)
 
 
 @dataclass
 class Result:
     trade_name: str
     search_query: str
+    rank: int
     matched_name: str
     price: str
     size: str
+    unit_price: str
+    unit_price_basis: str
     url: str
     status: str
+    date: str
     timestamp: str
 
 
 # -- Network capture ---------------------------------------------------------
 
 
+SEARCH_URL_INCLUDE = ("search",)
+# Recommendations / promo / sponsored / personalization endpoints also contain
+# product objects, so we exclude them — they were the reason every query
+# returned the same featured-produce item.
+SEARCH_URL_EXCLUDE = (
+    "recommend", "personaliz", "sponsored", "bazaarvoice",
+    "promo", "banner", "trending", "bestseller", "featured",
+    "similar", "related", "suggest", "carousel", "merchandised",
+    "analytics", "telemetry",
+    # Ad/marketing/tag networks that pass the page URL as a query param
+    # (and thus contain "search" if the user is on a search page).
+    "emarsys.net", "teads.tv", "doubleclick", "googletagmanager",
+    "google-analytics", "facebook.com", "scorecardresearch",
+    "adservice", "adsystem", "rubiconproject", "criteo", "pubmatic",
+    "bluekai", "demdex", "krxd", "segment.io", "mparticle",
+    "newrelic", "datadog", "sentry.io", "fullstory",
+)
+
+
 class SearchCapture:
-    """Capture JSON responses from search/catalog endpoints during a page load."""
+    """Capture JSON responses from search endpoints during a page load.
+
+    One instance per query; uses a context-manager-style attach/detach so
+    listeners don't leak across queries on the same page.
+    """
 
     def __init__(self) -> None:
         self.payloads: list[dict] = []
+        self._page: Optional[Page] = None
+        self._handler = None
 
-    async def attach(self, page: Page) -> None:
-        page.on("response", self._on_response)
+    def attach(self, page: Page) -> None:
+        self._page = page
+        self._handler = self._on_response
+        page.on("response", self._handler)
+
+    def detach(self) -> None:
+        if self._page and self._handler:
+            try:
+                self._page.remove_listener("response", self._handler)
+            except Exception:
+                pass
+        self._page = None
+        self._handler = None
 
     async def _on_response(self, response: Response) -> None:
         url = response.url.lower()
-        if not any(k in url for k in ("search", "catalog", "product", "graphql")):
+        if not any(k in url for k in SEARCH_URL_INCLUDE):
+            return
+        if any(k in url for k in SEARCH_URL_EXCLUDE):
             return
         ctype = (response.headers or {}).get("content-type", "")
         if "json" not in ctype:
@@ -93,6 +145,119 @@ class SearchCapture:
         for entry in self.payloads:
             products.extend(_walk_for_products(entry["data"]))
         return products
+
+
+def _query_words(q: str) -> set[str]:
+    return {w.lower() for w in re.findall(r"[a-zA-Z]{3,}", q)}
+
+
+def _name_score(name: str, qwords: set[str]) -> int:
+    """Count how many query words appear in the product name."""
+    if not name or not qwords:
+        return 0
+    nwords = {w.lower() for w in re.findall(r"[a-zA-Z]{3,}", name)}
+    return len(qwords & nwords)
+
+
+def _best_products(products: list[dict], query: str, n: int) -> list[dict]:
+    """Pick the top N products whose names best match the query.
+
+    Drops any product whose name has zero overlap with the query (those are
+    typically banner/recommendation items that snuck through filters).
+    """
+    if not products or n <= 0:
+        return []
+    qwords = _query_words(query)
+    scored: list[tuple[int, int, dict]] = []  # (score, -idx, product)
+    for i, p in enumerate(products):
+        name = p.get("name") or p.get("title") or p.get("displayName") or ""
+        score = _name_score(str(name), qwords)
+        if score == 0:
+            continue
+        scored.append((score, -i, p))
+    scored.sort(reverse=True)
+    return [p for _, _, p in scored[:n]]
+
+
+# -- Unit price --------------------------------------------------------------
+
+
+# Conversion factors to canonical units: weight→/lb, count→/ea.
+# Volume units (pint/qt/gal/ml/l/fl oz) aren't convertible to /lb without
+# density, so they pass through as their own basis.
+_TO_LB: dict[str, float] = {
+    "lb": 1.0,
+    "oz": 1.0 / 16.0,         # 16 oz = 1 lb
+    "kg": 2.2046226,
+    "g": 1.0 / 453.59237,
+}
+_COUNT_UNITS = {"ea", "each", "ct", "count", "pk", "pack"}
+
+
+def _normalize_unit(u: str) -> str:
+    u = u.lower().replace(" ", "")
+    if u in {"each"}:
+        return "ea"
+    if u in {"count"}:
+        return "ct"
+    return u
+
+
+def unit_price_from_text(text: str) -> tuple[str, str]:
+    """Pull a literal '$X.XX/unit' string out of tile text. Returns
+    (formatted_unit_price, basis) e.g. ('$1.55', '/lb'). ('','') if absent."""
+    if not text:
+        return "", ""
+    for rx in (UNIT_PRICE_RE, UNIT_PRICE_PAREN_RE):
+        m = rx.search(text)
+        if m:
+            amt = float(m.group(1))
+            unit = _normalize_unit(m.group(2))
+            return f"${amt:.2f}", f"/{unit}"
+    return "", ""
+
+
+def derive_unit_price(price: str, size: str) -> tuple[str, str]:
+    """Compute $/lb (for weight) or $/ea (for count) from price + size.
+    Returns ('', '') when units don't permit a clean conversion."""
+    if not price or not size:
+        return "", ""
+    pm = PRICE_RE.search(price)
+    sm = re.search(
+        r"(\d+(?:\.\d+)?)\s*(lb|oz|ct|count|each|ea|pk|pack|kg|g)\b",
+        size, re.IGNORECASE,
+    )
+    if not pm or not sm:
+        return "", ""
+    p = float(pm.group(1))
+    qty = float(sm.group(1))
+    unit = _normalize_unit(sm.group(2))
+    if qty <= 0:
+        return "", ""
+    if unit in _TO_LB:
+        lb = qty * _TO_LB[unit]
+        if lb <= 0:
+            return "", ""
+        return f"${p / lb:.2f}", "/lb"
+    if unit in _COUNT_UNITS:
+        return f"${p / qty:.2f}", "/ea"
+    return "", ""
+
+
+def fill_unit_price(fields: dict, source_text: str = "") -> dict:
+    """Populate fields['unit_price'] and ['unit_price_basis'] in place.
+
+    Prefers an explicit '$X.XX/lb' string in source_text (the tile text or
+    captured product description). Falls back to deriving from price+size.
+    """
+    up, basis = unit_price_from_text(source_text)
+    if not up:
+        up, basis = unit_price_from_text(fields.get("name", ""))
+    if not up:
+        up, basis = derive_unit_price(fields.get("price", ""), fields.get("size", ""))
+    fields["unit_price"] = up
+    fields["unit_price_basis"] = basis
+    return fields
 
 
 def _walk_for_products(node, depth: int = 0) -> list[dict]:
@@ -198,21 +363,121 @@ async def set_store_by_zip(page: Page, zip_code: str, debug: bool = False) -> bo
     await page.keyboard.press("Enter")
     await page.wait_for_timeout(3000)
 
-    # Pick first store
+    # Wait for the store-list cards to render. Each card includes a
+    # "Miles away" text; that's a reliable anchor.
+    try:
+        await page.wait_for_selector('text=/Miles away/i', timeout=8000)
+    except PWTimeout:
+        if debug:
+            print("  [store-pick] no 'Miles away' text — store list may not have rendered")
+
+    if not await _pick_first_store(page, debug):
+        print("[store] couldn't pick a store")
+        return False
+    await page.wait_for_timeout(1500)
+
+    # Optional follow-up: confirm/save/close (some flows auto-apply)
+    confirm_btns = [
+        'button:has-text("Save")',
+        'button:has-text("Continue")',
+        'button:has-text("Confirm")',
+        'button:has-text("Done")',
+        'button:has-text("Apply")',
+    ]
+    await _click_first_visible(page, confirm_btns, "store-confirm", debug)
+    await page.wait_for_timeout(2500)
+    print(f"[store] zip {zip_code} set")
+    return True
+
+
+async def _pick_first_store(page: Page, debug: bool) -> bool:
+    """Select the first store in the modal. Tries several strategies so we
+    don't get stuck on hidden inputs or React-managed radios."""
+    # Strategy 1: Locator.check() on the first visible radio. This is the
+    # right API for radios and dispatches the proper events even when the
+    # actual <input> is visually hidden.
+    radio_selectors = [
+        'input[type="radio"][name*="store" i]:visible',
+        'input[type="radio"]:visible',
+        '[role="radio"]:visible',
+    ]
+    for sel in radio_selectors:
+        try:
+            loc = page.locator(sel).first
+            if await loc.count() == 0:
+                continue
+            if debug:
+                print(f"  [store-pick] check() {sel!r}")
+            await loc.check(timeout=3000, force=True)
+            return True
+        except Exception as e:
+            if debug:
+                print(f"  [store-pick] check() failed: {type(e).__name__}: {e}")
+
+    # Strategy 2: click the parent <label> (covers cases where label wraps the
+    # radio and React's onChange is bound to the label).
+    label_selectors = [
+        'label:has(input[type="radio"])',
+        '[role="dialog"] label',
+    ]
+    for sel in label_selectors:
+        try:
+            loc = page.locator(sel).first
+            if await loc.count() == 0:
+                continue
+            if debug:
+                print(f"  [store-pick] click label {sel!r}")
+            await loc.click(timeout=3000, force=True)
+            return True
+        except Exception as e:
+            if debug:
+                print(f"  [store-pick] label click failed: {type(e).__name__}: {e}")
+
+    # Strategy 3: click the first store *card* using the "Miles away" anchor.
+    # We climb up to a reasonable card-sized ancestor and click that.
+    try:
+        if debug:
+            print("  [store-pick] clicking first card via 'Miles away' anchor")
+        clicked = await page.evaluate(
+            """
+            () => {
+              const nodes = Array.from(document.querySelectorAll('*'));
+              const target = nodes.find(n =>
+                n.textContent && /Miles away/i.test(n.textContent) &&
+                n.children.length < 8
+              );
+              if (!target) return false;
+              // Walk up to a card-like ancestor (one that contains a radio).
+              let card = target;
+              for (let i = 0; i < 6 && card; i++) {
+                if (card.querySelector && card.querySelector('input[type=radio], [role=radio]')) {
+                  card.click();
+                  const radio = card.querySelector('input[type=radio]');
+                  if (radio && !radio.checked) {
+                    radio.click();
+                  }
+                  return true;
+                }
+                card = card.parentElement;
+              }
+              return false;
+            }
+            """
+        )
+        if clicked:
+            return True
+    except Exception as e:
+        if debug:
+            print(f"  [store-pick] JS click failed: {type(e).__name__}: {e}")
+
+    # Strategy 4: legacy named-button flow.
     pick_btns = [
         'button:has-text("Make My Store")',
         'button:has-text("Set as my store")',
         'button:has-text("Set as My Store")',
-        'button:has-text("Select Store")',
-        'button:has-text("Select")',
         '[data-testid*="select-store" i]',
     ]
-    if not await _click_first_visible(page, pick_btns, "store-pick", debug):
-        print("[store] couldn't find store-pick button (may have auto-selected)")
-        # Some flows auto-select; fall through and trust the cookie.
-    await page.wait_for_timeout(2500)
-    print(f"[store] zip {zip_code} set")
-    return True
+    return await _click_first_visible(page, pick_btns, "store-btn", debug)
 
 
 async def _click_first_visible(page: Page, selectors: list[str], label: str,
@@ -248,42 +513,73 @@ async def _fill_first_visible(page: Page, selectors: list[str], value: str,
 # -- Search ------------------------------------------------------------------
 
 
-async def search_top_result(page: Page, query: str, debug: bool = False) -> dict:
-    """Navigate to search results for `query` and return the top product info."""
+async def search_top_results(page: Page, query: str, top_n: int,
+                              debug: bool = False,
+                              dump_payloads: bool = False) -> list[dict]:
+    """Navigate to search results and return up to `top_n` product dicts.
+
+    Each dict has: name, price, size, unit_price, unit_price_basis, url, status.
+    Always returns at least one dict (with status='no-result' or 'timeout' if
+    nothing was matched) so the driver can emit a row for the query.
+    """
     cap = SearchCapture()
-    await cap.attach(page)
-
-    url = SEARCH_URL_TMPL.format(query=query.replace(" ", "+"))
-    if debug:
-        print(f"  [search] {url}")
+    cap.attach(page)
     try:
-        await page.goto(url, wait_until="domcontentloaded", timeout=45000)
-    except PWTimeout:
-        return {"name": "", "price": "", "size": "", "url": url, "status": "timeout"}
+        url = SEARCH_URL_TMPL.format(query=query.replace(" ", "+"))
+        if debug:
+            print(f"  [search] {url}")
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=45000)
+        except PWTimeout:
+            return [{"name": "", "price": "", "size": "",
+                     "unit_price": "", "unit_price_basis": "",
+                     "url": url, "status": "timeout"}]
 
-    # Wait for the network to quiet so XHR captures fire.
-    try:
-        await page.wait_for_load_state("networkidle", timeout=15000)
-    except PWTimeout:
-        pass
-    await page.wait_for_timeout(1500)
+        try:
+            await page.wait_for_load_state("networkidle", timeout=15000)
+        except PWTimeout:
+            pass
+        await page.wait_for_timeout(1500)
 
-    # Prefer captured API data
-    products = cap.extract_products()
-    if products:
-        first = _product_to_fields(products[0])
-        if first["name"]:
-            return {**first, "status": "ok"}
+        if debug:
+            print(f"  [capture] {len(cap.payloads)} matching JSON responses")
+            for ep in cap.payloads[:5]:
+                print(f"    - {ep['url']}")
 
-    # Fallback: DOM scrape
-    dom = await _dom_top_result(page, debug)
-    if dom["name"]:
-        return {**dom, "status": "ok-dom"}
-    return {"name": "", "price": "", "size": "", "url": url, "status": "no-result"}
+        if dump_payloads and cap.payloads:
+            dump_path = Path(f"payload-{re.sub(r'[^a-z0-9]+', '-', query.lower())}.json")
+            with open(dump_path, "w", encoding="utf-8") as f:
+                json.dump(cap.payloads, f, indent=2, default=str)
+            print(f"  [capture] dumped to {dump_path}")
+
+        # 1) Try DOM first — for Meijer, DOM order matches what the user sees,
+        #    and the API path has only ever returned ad-network noise.
+        dom_results = await _dom_top_results(page, top_n, debug)
+        if dom_results:
+            return [{**r, "status": "ok-dom"} for r in dom_results]
+
+        # 2) Fall back to captured API data with relevance scoring.
+        products = cap.extract_products()
+        best = _best_products(products, query, top_n)
+        if best:
+            out: list[dict] = []
+            for p in best:
+                fields = _product_to_fields(p)
+                if fields["name"]:
+                    fill_unit_price(fields, json.dumps(p, default=str))
+                    out.append({**fields, "status": "ok"})
+            if out:
+                return out
+
+        return [{"name": "", "price": "", "size": "",
+                 "unit_price": "", "unit_price_basis": "",
+                 "url": url, "status": "no-result"}]
+    finally:
+        cap.detach()
 
 
-async def _dom_top_result(page: Page, debug: bool) -> dict:
-    """Best-effort DOM extraction of the first product card."""
+async def _dom_top_results(page: Page, top_n: int, debug: bool) -> list[dict]:
+    """Extract the first `top_n` visible product cards from the search page."""
     card_selectors = [
         '[data-testid="product-tile"]',
         '[class*="product-tile"]',
@@ -291,57 +587,77 @@ async def _dom_top_result(page: Page, debug: bool) -> dict:
         '[class*="productCard"]',
         'article[class*="product" i]',
     ]
-    card = None
+    cards_locator = None
     for sel in card_selectors:
         try:
-            loc = page.locator(sel).first
-            if await loc.is_visible(timeout=2000):
-                card = loc
+            loc = page.locator(sel)
+            if await loc.first.is_visible(timeout=2000):
+                cards_locator = loc
                 if debug:
                     print(f"  [dom] using card selector {sel!r}")
                 break
         except Exception:
             continue
-    if card is None:
-        return {"name": "", "price": "", "size": "", "url": ""}
+    if cards_locator is None:
+        return []
 
-    # Name
-    name = ""
-    for sel in ['[class*="name" i]', '[class*="title" i]', 'a[href*="/shop/"]', 'h2', 'h3']:
+    try:
+        count = await cards_locator.count()
+    except Exception:
+        count = 0
+    if count == 0:
+        return []
+
+    out: list[dict] = []
+    for i in range(min(count, top_n)):
+        card = cards_locator.nth(i)
         try:
-            t = await card.locator(sel).first.inner_text(timeout=1500)
-            if t and t.strip():
-                name = t.strip().splitlines()[0]
-                break
+            text = await card.inner_text(timeout=2000)
         except Exception:
-            continue
+            text = ""
 
-    # Price
-    price = ""
-    try:
-        text = await card.inner_text(timeout=2000)
-    except Exception:
-        text = ""
-    m = PRICE_RE.search(text)
-    if m:
-        price = f"${m.group(1)}"
+        # Name
+        name = ""
+        for sel in ['[class*="name" i]', '[class*="title" i]',
+                    'a[href*="/shop/"]', 'h2', 'h3']:
+            try:
+                t = await card.locator(sel).first.inner_text(timeout=1000)
+                if t and t.strip():
+                    name = t.strip().splitlines()[0]
+                    break
+            except Exception:
+                continue
+        if not name and text:
+            name = text.strip().splitlines()[0]
 
-    # Size
-    size = ""
-    sm = SIZE_RE.search(text)
-    if sm:
-        size = sm.group(1)
+        # Price (first $X.XX in the tile)
+        price = ""
+        m = PRICE_RE.search(text)
+        if m:
+            price = f"${m.group(1)}"
 
-    # URL
-    url = ""
-    try:
-        href = await card.locator("a[href*='/shop/']").first.get_attribute("href", timeout=1500)
-        if href:
-            url = href if href.startswith("http") else BASE_URL + href
-    except Exception:
-        pass
+        # Size
+        size = ""
+        sm = SIZE_RE.search(text)
+        if sm:
+            size = sm.group(1)
 
-    return {"name": name, "price": price, "size": size, "url": url}
+        # URL
+        url = ""
+        try:
+            href = await card.locator("a[href*='/shop/']").first.get_attribute(
+                "href", timeout=1000
+            )
+            if href:
+                url = href if href.startswith("http") else BASE_URL + href
+        except Exception:
+            pass
+
+        fields = {"name": name, "price": price, "size": size, "url": url}
+        fill_unit_price(fields, text)
+        out.append(fields)
+
+    return out
 
 
 # -- Driver ------------------------------------------------------------------
@@ -367,14 +683,26 @@ async def run(args: argparse.Namespace) -> int:
         print("no queries to run", file=sys.stderr)
         return 2
 
-    out_path = Path(args.output)
+    today = datetime.now().strftime("%Y-%m-%d")
+    if args.snapshot:
+        # In snapshot mode: write a date-stamped file under snapshots/ (unless
+        # the user explicitly overrode --output) and append to history.csv.
+        if args.output == "results.csv":  # default — auto-stamp it
+            out_path = Path("snapshots") / f"results-{today}.csv"
+        else:
+            out_path = Path(args.output)
+    else:
+        out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch(
-            headless=not args.headed,
-            args=["--disable-blink-features=AutomationControlled"],
-        )
+        launch_kwargs = {
+            "headless": not args.headed,
+            "args": ["--disable-blink-features=AutomationControlled"],
+        }
+        if args.channel:
+            launch_kwargs["channel"] = args.channel
+        browser = await pw.chromium.launch(**launch_kwargs)
         context: BrowserContext = await browser.new_context(
             user_agent=(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -396,35 +724,76 @@ async def run(args: argparse.Namespace) -> int:
         for trade, q in queries:
             print(f"[search] {trade!r} -> {q!r}")
             try:
-                r = await search_top_result(page, q, debug=args.debug)
+                rs = await search_top_results(
+                    page, q, top_n=args.top_n, debug=args.debug,
+                    dump_payloads=args.dump_payloads,
+                )
             except Exception as e:
-                r = {"name": "", "price": "", "size": "",
-                     "url": SEARCH_URL_TMPL.format(query=q.replace(" ", "+")),
-                     "status": f"error:{type(e).__name__}"}
-                print(f"  [error] {e}")
-            results.append(Result(
-                trade_name=trade,
-                search_query=q,
-                matched_name=r["name"],
-                price=r["price"],
-                size=r["size"],
-                url=r["url"],
-                status=r["status"],
-                timestamp=datetime.utcnow().isoformat(timespec="seconds") + "Z",
-            ))
-            print(f"  -> {r['status']}: {r['name']!r} {r['price']} {r['size']}")
-            await page.wait_for_timeout(int(args.delay * 1000))
+                rs = [{
+                    "name": "", "price": "", "size": "",
+                    "unit_price": "", "unit_price_basis": "",
+                    "url": SEARCH_URL_TMPL.format(query=q.replace(" ", "+")),
+                    "status": f"error:{type(e).__name__}",
+                }]
+                print(f"  [error] {type(e).__name__}: {e}")
+                # If the page or browser died, try to recover by opening a
+                # fresh page in the same context (cookies/store persist).
+                try:
+                    if page.is_closed():
+                        page = await context.new_page()
+                except Exception:
+                    pass
+            ts = (datetime.now(timezone.utc).isoformat(timespec="seconds")
+                  .replace("+00:00", "Z"))
+            for rank, r in enumerate(rs, start=1):
+                results.append(Result(
+                    trade_name=trade,
+                    search_query=q,
+                    rank=rank,
+                    matched_name=r.get("name", ""),
+                    price=r.get("price", ""),
+                    size=r.get("size", ""),
+                    unit_price=r.get("unit_price", ""),
+                    unit_price_basis=r.get("unit_price_basis", ""),
+                    url=r.get("url", ""),
+                    status=r.get("status", ""),
+                    date=today,
+                    timestamp=ts,
+                ))
+                up = r.get("unit_price", "")
+                up_b = r.get("unit_price_basis", "")
+                up_s = f" ({up}{up_b})" if up else ""
+                print(f"  #{rank} -> {r.get('status','')}: {r.get('name','')!r} "
+                      f"{r.get('price','')} {r.get('size','')}{up_s}")
+            try:
+                await page.wait_for_timeout(int(args.delay * 1000))
+            except Exception:
+                pass
 
         await browser.close()
 
+    fieldnames = list(asdict(results[0]).keys())
     with open(out_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(asdict(results[0]).keys()))
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for r in results:
             writer.writerow(asdict(r))
 
     ok_count = sum(1 for r in results if r.status.startswith("ok"))
     print(f"\nwrote {out_path} ({ok_count}/{len(results)} matched)")
+
+    if args.snapshot:
+        hist_path = Path(args.history_file)
+        hist_path.parent.mkdir(parents=True, exist_ok=True)
+        new_file = not hist_path.exists()
+        with open(hist_path, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            if new_file:
+                writer.writeheader()
+            for r in results:
+                writer.writerow(asdict(r))
+        print(f"appended {len(results)} rows to {hist_path}")
+
     return 0
 
 
@@ -441,6 +810,20 @@ def main() -> int:
                    help="Abort if store selection fails")
     p.add_argument("--delay", type=float, default=1.5,
                    help="Seconds to wait between searches (default: 1.5)")
+    p.add_argument("--channel", default="chrome",
+                   help="Browser channel to launch: 'chrome', 'msedge', or '' "
+                        "(empty = use Playwright's bundled Chromium). Default: chrome")
+    p.add_argument("--dump-payloads", action="store_true",
+                   help="For each query, dump captured search-API JSON to "
+                        "payload-<query>.json for inspection")
+    p.add_argument("--top-n", type=int, default=1,
+                   help="Number of top matches to record per query (default: 1)")
+    p.add_argument("--snapshot", action="store_true",
+                   help="Snapshot mode: write date-stamped CSV under snapshots/ "
+                        "and append all rows to a rolling history file.")
+    p.add_argument("--history-file", default="history.csv",
+                   help="Rolling history CSV path (used with --snapshot). "
+                        "Default: history.csv")
     args = p.parse_args()
     return asyncio.run(run(args))
 
