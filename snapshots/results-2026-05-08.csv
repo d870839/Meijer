@@ -1,82 +1,163 @@
-trade_name,search_query,rank,matched_name,price,size,unit_price,unit_price_basis,url,status,date,timestamp
-CELERY NAKED RPC,celery,1,Fresh from Meijer Pascal Celery,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T15:19:33Z
-CELERY NAKED RPC,celery,2,Fresh from Meijer Pascal Celery,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T15:19:33Z
-CELERY NAKED RPC,celery,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:19:33Z
-POTATOES IDAHO BAKER,idaho baker potato,1,Russet Potatoes Tray Pack 4 CT,$3.99,4 CT,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T15:20:02Z
-POTATOES IDAHO BAKER,idaho baker potato,2,Russet Potatoes Tray Pack 4 CT,$3.99,4 CT,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T15:20:02Z
-POTATOES IDAHO BAKER,idaho baker potato,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:20:02Z
-ASPARAGUS STANDARD 11LB,asparagus,1,Green Asparagus,$4.99,1.25 lb,$3.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:20:31Z
-ASPARAGUS STANDARD 11LB,asparagus,2,Green Asparagus,$4.99,1.25 lb,$3.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:20:31Z
-ASPARAGUS STANDARD 11LB,asparagus,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:20:31Z
-ONIONS RED JUMBO CTN 40#,red onion,1,Red Onion,$1.86,1.86 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:21:00Z
-ONIONS RED JUMBO CTN 40#,red onion,2,Red Onion,$1.86,1.86 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:21:00Z
-ONIONS RED JUMBO CTN 40#,red onion,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:21:00Z
-TOMATOES ROMA LUG,roma tomato,1,Roma Tomato Extra Large,$0.60,0.60 each,$2.39,/lb,,ok-dom,2026-05-08,2026-05-08T15:21:29Z
-TOMATOES ROMA LUG,roma tomato,2,Roma Tomato Extra Large,$0.60,0.60 each,$2.39,/lb,,ok-dom,2026-05-08,2026-05-08T15:21:29Z
-TOMATOES ROMA LUG,roma tomato,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:21:29Z
-ONIONS YELLOW JUMBO 1015,sweet onion,1,Sweet Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:21:58Z
-ONIONS YELLOW JUMBO 1015,sweet onion,2,Sweet Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:21:58Z
-ONIONS YELLOW JUMBO 1015,sweet onion,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:21:58Z
-PEPPERS JALAPENO,jalapeno pepper,1,Jalapeno Pepper,$0.30,0.30 each,$1.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:22:27Z
-PEPPERS JALAPENO,jalapeno pepper,2,Jalapeno Pepper,$0.30,0.30 each,$1.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:22:27Z
-PEPPERS JALAPENO,jalapeno pepper,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:22:27Z
-CILANTRO VALUE,cilantro,1,"Cilantro, bunch",$0.89,,,,,ok-dom,2026-05-08,2026-05-08T15:22:56Z
-CILANTRO VALUE,cilantro,2,"Cilantro, bunch",$0.89,,,,,ok-dom,2026-05-08,2026-05-08T15:22:56Z
-CILANTRO VALUE,cilantro,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:22:56Z
-APPLES FUJI POLY,fuji apples,1,"Fuji Apples, 3 lb",$3.29,3 lb,$1.10,/lb,,ok-dom,2026-05-08,2026-05-08T15:23:25Z
-APPLES FUJI POLY,fuji apples,2,"Fuji Apples, 3 lb",$3.29,3 lb,$1.10,/lb,,ok-dom,2026-05-08,2026-05-08T15:23:25Z
-APPLES FUJI POLY,fuji apples,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:23:25Z
-APL COSMIC CRSP BAG,cosmic crisp apples,1,Cosmic Crisp Apple,$1.57,1.57 each,$2.09,/lb,,ok-dom,2026-05-08,2026-05-08T15:23:54Z
-APL COSMIC CRSP BAG,cosmic crisp apples,2,Cosmic Crisp Apple,$1.57,1.57 each,$2.09,/lb,,ok-dom,2026-05-08,2026-05-08T15:23:54Z
-APL COSMIC CRSP BAG,cosmic crisp apples,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:23:54Z
-CLASSIC GARDEN SALAD,garden salad,1,"Dole Salad Greener Selection, 11 oz",$5.00,11 oz,$7.27,/lb,,ok-dom,2026-05-08,2026-05-08T15:24:23Z
-CLASSIC GARDEN SALAD,garden salad,2,"Dole Salad Greener Selection, 11 oz",$5.00,11 oz,$7.27,/lb,,ok-dom,2026-05-08,2026-05-08T15:24:23Z
-CLASSIC GARDEN SALAD,garden salad,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:24:23Z
-SHRD ICEBERG LETTUCE,shredded iceberg lettuce,1,"Dole Salad Shredded Lettuce, 8 oz",$2.29,8 oz,$4.58,/lb,,ok-dom,2026-05-08,2026-05-08T15:24:51Z
-SHRD ICEBERG LETTUCE,shredded iceberg lettuce,2,"Dole Salad Shredded Lettuce, 8 oz",$2.29,8 oz,$4.58,/lb,,ok-dom,2026-05-08,2026-05-08T15:24:51Z
-SHRD ICEBERG LETTUCE,shredded iceberg lettuce,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:24:51Z
-CUTPEELED BBY CARROT,baby carrots,1,"Fresh from Meijer Baby-Cut Carrots, 1 lb.",$1.39,1 lb,$1.39,/lb,,ok-dom,2026-05-08,2026-05-08T15:25:20Z
-CUTPEELED BBY CARROT,baby carrots,2,"Fresh from Meijer Baby-Cut Carrots, 1 lb.",$1.39,1 lb,$1.39,/lb,,ok-dom,2026-05-08,2026-05-08T15:25:20Z
-CUTPEELED BBY CARROT,baby carrots,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:25:20Z
-ONIONS WHITE JUMBO BULK,white onion,1,White Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:25:49Z
-ONIONS WHITE JUMBO BULK,white onion,2,White Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:25:49Z
-ONIONS WHITE JUMBO BULK,white onion,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:25:49Z
-CABBAGE GREEN MEDIUM RPC,green cabbage,1,"Green Cabbage, lb",$2.48,2.48 each,$0.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:26:18Z
-CABBAGE GREEN MEDIUM RPC,green cabbage,2,"Green Cabbage, lb",$2.48,2.48 each,$0.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:26:18Z
-CABBAGE GREEN MEDIUM RPC,green cabbage,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:26:18Z
-CUCUMBERS,cucumber,1,Seedless English Greenhouse Cucumber,$0.88,,,,,ok-dom,2026-05-08,2026-05-08T15:26:47Z
-CUCUMBERS,cucumber,2,Seedless English Greenhouse Cucumber,$0.88,,,,,ok-dom,2026-05-08,2026-05-08T15:26:47Z
-CUCUMBERS,cucumber,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:26:47Z
-APPLES GALA EURO 50 CT,gala apples,1,"Gala Apples, 3 lb",$4.69,3 lb,$1.56,/lb,,ok-dom,2026-05-08,2026-05-08T15:27:16Z
-APPLES GALA EURO 50 CT,gala apples,2,"Gala Apples, 3 lb",$4.69,3 lb,$1.56,/lb,,ok-dom,2026-05-08,2026-05-08T15:27:16Z
-APPLES GALA EURO 50 CT,gala apples,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:27:16Z
-GRAPES WHITE SDLS BAG,green seedless grapes,1,Green Seedless Grapes,$7.48,2.5 lb,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:27:45Z
-GRAPES WHITE SDLS BAG,green seedless grapes,2,Green Seedless Grapes,$7.48,2.5 lb,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:27:45Z
-GRAPES WHITE SDLS BAG,green seedless grapes,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:27:45Z
-GRAPES RED SDLS BAG,red seedless grapes,1,"Red Seedless Grapes, Bag",$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T15:28:15Z
-GRAPES RED SDLS BAG,red seedless grapes,2,"Red Seedless Grapes, Bag",$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T15:28:15Z
-GRAPES RED SDLS BAG,red seedless grapes,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:28:15Z
-GRAPES BLACK SDLS BAG,black seedless grapes,1,Black Seedless Grapes,$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T15:28:43Z
-GRAPES BLACK SDLS BAG,black seedless grapes,2,Black Seedless Grapes,$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T15:28:43Z
-GRAPES BLACK SDLS BAG,black seedless grapes,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:28:43Z
-PEPPERS BELL GREEN RPC,green bell pepper,1,Green Bell Pepper,$1.29,,,,,ok-dom,2026-05-08,2026-05-08T15:29:13Z
-PEPPERS BELL GREEN RPC,green bell pepper,2,Green Bell Pepper,$1.29,,,,,ok-dom,2026-05-08,2026-05-08T15:29:13Z
-PEPPERS BELL GREEN RPC,green bell pepper,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:29:13Z
-POTATOES RUSSET,russet potatoes,1,"Russet Potatoes, 5 lb",$3.79,5 lb,$0.76,/lb,,ok-dom,2026-05-08,2026-05-08T15:29:42Z
-POTATOES RUSSET,russet potatoes,2,"Russet Potatoes, 5 lb",$3.79,5 lb,$0.76,/lb,,ok-dom,2026-05-08,2026-05-08T15:29:42Z
-POTATOES RUSSET,russet potatoes,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:29:42Z
-PEPPERS RED BELL,red bell pepper,1,Red Bell Pepper,$1.59,,,,,ok-dom,2026-05-08,2026-05-08T15:30:10Z
-PEPPERS RED BELL,red bell pepper,2,Red Bell Pepper,$1.59,,,,,ok-dom,2026-05-08,2026-05-08T15:30:10Z
-PEPPERS RED BELL,red bell pepper,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:30:10Z
-TOMATOES HYDROPONIC,hydroponic tomato,1,Greenhouse Tomato,$1.29,1.29 each,$3.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:30:40Z
-TOMATOES HYDROPONIC,hydroponic tomato,2,Greenhouse Tomato,$1.29,1.29 each,$3.49,/lb,,ok-dom,2026-05-08,2026-05-08T15:30:40Z
-TOMATOES HYDROPONIC,hydroponic tomato,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:30:40Z
-ONIONS GREEN ICLS BAG RPC,green onions,1,Green Onion Bunch,$1.09,,,,,ok-dom,2026-05-08,2026-05-08T15:31:09Z
-ONIONS GREEN ICLS BAG RPC,green onions,2,Green Onion Bunch,$1.09,,,,,ok-dom,2026-05-08,2026-05-08T15:31:09Z
-ONIONS GREEN ICLS BAG RPC,green onions,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:31:09Z
-TOMATOES BUNCHED,tomatoes on the vine,1,Tomatoes on the Vine,$4.04,1.5 lb,$2.69,/lb,,ok-dom,2026-05-08,2026-05-08T15:31:38Z
-TOMATOES BUNCHED,tomatoes on the vine,2,Tomatoes on the Vine,$4.04,1.5 lb,$2.69,/lb,,ok-dom,2026-05-08,2026-05-08T15:31:38Z
-TOMATOES BUNCHED,tomatoes on the vine,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:31:38Z
-STRAWBERRIES,strawberries,1,"Strawberries, 16 oz",$2.99,16 oz,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:32:06Z
-STRAWBERRIES,strawberries,2,"Strawberries, 16 oz",$2.99,16 oz,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T15:32:06Z
-STRAWBERRIES,strawberries,3,,,,,,,ok-dom,2026-05-08,2026-05-08T15:32:06Z
+zip_code,trade_name,search_query,rank,matched_name,price,size,unit_price,unit_price_basis,url,status,date,timestamp
+43537,CELERY NAKED RPC,celery,1,Fresh from Meijer Pascal Celery,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T17:08:54Z
+43537,CELERY NAKED RPC,celery,2,Fresh from Meijer Pascal Celery,,,,,,ok-dom,2026-05-08,2026-05-08T17:08:54Z
+43537,CELERY NAKED RPC,celery,3,Original price,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T17:08:54Z
+43537,POTATOES IDAHO BAKER,idaho baker potato,1,Russet Potatoes Tray Pack 4 CT,$3.99,4 CT,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:09:43Z
+43537,POTATOES IDAHO BAKER,idaho baker potato,2,Russet Potatoes Tray Pack 4 CT,,4 CT,,,,ok-dom,2026-05-08,2026-05-08T17:09:43Z
+43537,POTATOES IDAHO BAKER,idaho baker potato,3,Original price,$3.99,,,,,ok-dom,2026-05-08,2026-05-08T17:09:43Z
+43537,ASPARAGUS STANDARD 11LB,asparagus,1,Green Asparagus,$4.99,1.25 lb,$3.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:10:32Z
+43537,ASPARAGUS STANDARD 11LB,asparagus,2,Green Asparagus,,,,,,ok-dom,2026-05-08,2026-05-08T17:10:32Z
+43537,ASPARAGUS STANDARD 11LB,asparagus,3,Original price,$4.99,,,,,ok-dom,2026-05-08,2026-05-08T17:10:32Z
+43537,ONIONS RED JUMBO CTN 40#,red onion,1,Red Onion,$1.86,1.86 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:11:21Z
+43537,ONIONS RED JUMBO CTN 40#,red onion,2,Red Onion,,,,,,ok-dom,2026-05-08,2026-05-08T17:11:21Z
+43537,ONIONS RED JUMBO CTN 40#,red onion,3,Original price,$1.86,1.86 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:11:21Z
+43537,TOMATOES ROMA LUG,roma tomato,1,Roma Tomato Extra Large,$0.60,0.60 each,$2.39,/lb,,ok-dom,2026-05-08,2026-05-08T17:12:10Z
+43537,TOMATOES ROMA LUG,roma tomato,2,Roma Tomato Extra Large,,,,,,ok-dom,2026-05-08,2026-05-08T17:12:10Z
+43537,TOMATOES ROMA LUG,roma tomato,3,Original price,$0.60,0.60 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:12:10Z
+43537,ONIONS YELLOW JUMBO 1015,sweet onion,1,Sweet Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:12:59Z
+43537,ONIONS YELLOW JUMBO 1015,sweet onion,2,Sweet Onion,,,,,,ok-dom,2026-05-08,2026-05-08T17:12:59Z
+43537,ONIONS YELLOW JUMBO 1015,sweet onion,3,Original price,$1.49,1.49 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:12:59Z
+43537,PEPPERS JALAPENO,jalapeno pepper,1,Jalapeno Pepper,$0.30,0.30 each,$1.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:13:48Z
+43537,PEPPERS JALAPENO,jalapeno pepper,2,Jalapeno Pepper,,,,,,ok-dom,2026-05-08,2026-05-08T17:13:48Z
+43537,PEPPERS JALAPENO,jalapeno pepper,3,Original price,$0.30,0.30 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:13:48Z
+43537,CILANTRO VALUE,cilantro,1,"Cilantro, bunch",$0.89,,,,,ok-dom,2026-05-08,2026-05-08T17:14:37Z
+43537,CILANTRO VALUE,cilantro,2,"Cilantro, bunch",,,,,,ok-dom,2026-05-08,2026-05-08T17:14:37Z
+43537,CILANTRO VALUE,cilantro,3,Original price,$0.89,,,,,ok-dom,2026-05-08,2026-05-08T17:14:37Z
+43537,APPLES FUJI POLY,fuji apples,1,"Fuji Apples, 3 lb",$3.29,3 lb,$1.10,/lb,,ok-dom,2026-05-08,2026-05-08T17:15:25Z
+43537,APPLES FUJI POLY,fuji apples,2,"Fuji Apples, 3 lb",,3 lb,,,,ok-dom,2026-05-08,2026-05-08T17:15:25Z
+43537,APPLES FUJI POLY,fuji apples,3,Original price,$3.29,,,,,ok-dom,2026-05-08,2026-05-08T17:15:25Z
+43537,APL COSMIC CRSP BAG,cosmic crisp apples,1,Cosmic Crisp Apple,$1.49,1.49 each,$1.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:16:14Z
+43537,APL COSMIC CRSP BAG,cosmic crisp apples,2,Cosmic Crisp Apple,,,,,,ok-dom,2026-05-08,2026-05-08T17:16:14Z
+43537,APL COSMIC CRSP BAG,cosmic crisp apples,3,Original price,$1.49,1.49 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:16:14Z
+43537,CLASSIC GARDEN SALAD,garden salad,1,"Dole Salad Garden, 12 oz",$2.29,12 oz,$3.05,/lb,,ok-dom,2026-05-08,2026-05-08T17:17:03Z
+43537,CLASSIC GARDEN SALAD,garden salad,2,"Dole Salad Garden, 12 oz",,12 oz,,,,ok-dom,2026-05-08,2026-05-08T17:17:03Z
+43537,CLASSIC GARDEN SALAD,garden salad,3,Original price,$2.29,,,,,ok-dom,2026-05-08,2026-05-08T17:17:03Z
+43537,SHRD ICEBERG LETTUCE,shredded iceberg lettuce,1,"Dole Salad Shredded Lettuce, 8 oz",$2.29,8 oz,$4.58,/lb,,ok-dom,2026-05-08,2026-05-08T17:17:52Z
+43537,SHRD ICEBERG LETTUCE,shredded iceberg lettuce,2,"Dole Salad Shredded Lettuce, 8 oz",,8 oz,,,,ok-dom,2026-05-08,2026-05-08T17:17:52Z
+43537,SHRD ICEBERG LETTUCE,shredded iceberg lettuce,3,Original price,$2.29,,,,,ok-dom,2026-05-08,2026-05-08T17:17:52Z
+43537,CUTPEELED BBY CARROT,baby carrots,1,"Fresh from Meijer Baby-Cut Carrots, 1 lb.",$1.39,1 lb,$1.39,/lb,,ok-dom,2026-05-08,2026-05-08T17:18:41Z
+43537,CUTPEELED BBY CARROT,baby carrots,2,"Fresh from Meijer Baby-Cut Carrots, 1 lb.",,1 lb,,,,ok-dom,2026-05-08,2026-05-08T17:18:41Z
+43537,CUTPEELED BBY CARROT,baby carrots,3,Original price,$1.39,,,,,ok-dom,2026-05-08,2026-05-08T17:18:41Z
+43537,ONIONS WHITE JUMBO BULK,white onion,1,White Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:19:30Z
+43537,ONIONS WHITE JUMBO BULK,white onion,2,White Onion,,,,,,ok-dom,2026-05-08,2026-05-08T17:19:30Z
+43537,ONIONS WHITE JUMBO BULK,white onion,3,Original price,$1.49,1.49 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:19:30Z
+43537,CABBAGE GREEN MEDIUM RPC,green cabbage,1,"Green Cabbage, lb",$2.48,2.48 each,$0.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:20:19Z
+43537,CABBAGE GREEN MEDIUM RPC,green cabbage,2,"Green Cabbage, lb",,,,,,ok-dom,2026-05-08,2026-05-08T17:20:19Z
+43537,CABBAGE GREEN MEDIUM RPC,green cabbage,3,Original price,$2.48,2.48 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:20:19Z
+43537,CUCUMBERS,cucumber,1,Seedless English Greenhouse Cucumber,$0.88,,,,,ok-dom,2026-05-08,2026-05-08T17:21:09Z
+43537,CUCUMBERS,cucumber,2,Seedless English Greenhouse Cucumber,,,,,,ok-dom,2026-05-08,2026-05-08T17:21:09Z
+43537,CUCUMBERS,cucumber,3,Sale price,$0.88,,,,,ok-dom,2026-05-08,2026-05-08T17:21:09Z
+43537,APPLES GALA EURO 50 CT,gala apples,1,"Gala Apples, 3 lb",$4.69,3 lb,$1.56,/lb,,ok-dom,2026-05-08,2026-05-08T17:21:57Z
+43537,APPLES GALA EURO 50 CT,gala apples,2,"Gala Apples, 3 lb",,3 lb,,,,ok-dom,2026-05-08,2026-05-08T17:21:57Z
+43537,APPLES GALA EURO 50 CT,gala apples,3,Original price,$4.69,,,,,ok-dom,2026-05-08,2026-05-08T17:21:57Z
+43537,GRAPES WHITE SDLS BAG,green seedless grapes,1,Green Seedless Grapes,$7.48,2.5 lb,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:22:46Z
+43537,GRAPES WHITE SDLS BAG,green seedless grapes,2,Green Seedless Grapes,,,,,,ok-dom,2026-05-08,2026-05-08T17:22:46Z
+43537,GRAPES WHITE SDLS BAG,green seedless grapes,3,Original price,$7.48,,,,,ok-dom,2026-05-08,2026-05-08T17:22:46Z
+43537,GRAPES RED SDLS BAG,red seedless grapes,1,"Red Seedless Grapes, Bag",$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T17:23:36Z
+43537,GRAPES RED SDLS BAG,red seedless grapes,2,"Red Seedless Grapes, Bag",,,,,,ok-dom,2026-05-08,2026-05-08T17:23:36Z
+43537,GRAPES RED SDLS BAG,red seedless grapes,3,Original price,$6.98,,,,,ok-dom,2026-05-08,2026-05-08T17:23:36Z
+43537,GRAPES BLACK SDLS BAG,black seedless grapes,1,Black Seedless Grapes,$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T17:24:24Z
+43537,GRAPES BLACK SDLS BAG,black seedless grapes,2,Black Seedless Grapes,,,,,,ok-dom,2026-05-08,2026-05-08T17:24:24Z
+43537,GRAPES BLACK SDLS BAG,black seedless grapes,3,Original price,$6.98,,,,,ok-dom,2026-05-08,2026-05-08T17:24:24Z
+43537,PEPPERS BELL GREEN RPC,green bell pepper,1,Green Bell Pepper,$1.29,,,,,ok-dom,2026-05-08,2026-05-08T17:25:14Z
+43537,PEPPERS BELL GREEN RPC,green bell pepper,2,Green Bell Pepper,,,,,,ok-dom,2026-05-08,2026-05-08T17:25:14Z
+43537,PEPPERS BELL GREEN RPC,green bell pepper,3,Original price,$1.29,,,,,ok-dom,2026-05-08,2026-05-08T17:25:14Z
+43537,POTATOES RUSSET,russet potatoes,1,"Russet Potatoes, 5 lb",$2.99,5 lb,$0.60,/lb,,ok-dom,2026-05-08,2026-05-08T17:26:03Z
+43537,POTATOES RUSSET,russet potatoes,2,"Russet Potatoes, 5 lb",,5 lb,,,,ok-dom,2026-05-08,2026-05-08T17:26:03Z
+43537,POTATOES RUSSET,russet potatoes,3,Original price,$2.99,,,,,ok-dom,2026-05-08,2026-05-08T17:26:03Z
+43537,PEPPERS RED BELL,red bell pepper,1,Red Bell Pepper,$1.59,,,,,ok-dom,2026-05-08,2026-05-08T17:26:51Z
+43537,PEPPERS RED BELL,red bell pepper,2,Red Bell Pepper,,,,,,ok-dom,2026-05-08,2026-05-08T17:26:51Z
+43537,PEPPERS RED BELL,red bell pepper,3,Original price,$1.59,,,,,ok-dom,2026-05-08,2026-05-08T17:26:51Z
+43537,TOMATOES HYDROPONIC,hydroponic tomato,1,Greenhouse Tomato,$1.29,1.29 each,$3.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:27:40Z
+43537,TOMATOES HYDROPONIC,hydroponic tomato,2,Greenhouse Tomato,,,,,,ok-dom,2026-05-08,2026-05-08T17:27:40Z
+43537,TOMATOES HYDROPONIC,hydroponic tomato,3,Original price,$1.29,1.29 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:27:40Z
+43537,ONIONS GREEN ICLS BAG RPC,green onions,1,Green Onion Bunch,$1.09,,,,,ok-dom,2026-05-08,2026-05-08T17:28:29Z
+43537,ONIONS GREEN ICLS BAG RPC,green onions,2,Green Onion Bunch,,,,,,ok-dom,2026-05-08,2026-05-08T17:28:29Z
+43537,ONIONS GREEN ICLS BAG RPC,green onions,3,Original price,$1.09,,,,,ok-dom,2026-05-08,2026-05-08T17:28:29Z
+43537,TOMATOES BUNCHED,tomatoes on the vine,1,Tomatoes on the Vine,$4.04,1.5 lb,$2.69,/lb,,ok-dom,2026-05-08,2026-05-08T17:29:18Z
+43537,TOMATOES BUNCHED,tomatoes on the vine,2,Tomatoes on the Vine,,,,,,ok-dom,2026-05-08,2026-05-08T17:29:18Z
+43537,TOMATOES BUNCHED,tomatoes on the vine,3,Original price,$4.04,,,,,ok-dom,2026-05-08,2026-05-08T17:29:18Z
+43537,STRAWBERRIES,strawberries,1,"Strawberries, 16 oz",$2.99,16 oz,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:30:07Z
+43537,STRAWBERRIES,strawberries,2,"Strawberries, 16 oz",,16 oz,,,,ok-dom,2026-05-08,2026-05-08T17:30:07Z
+43537,STRAWBERRIES,strawberries,3,Original price,$2.99,,,,,ok-dom,2026-05-08,2026-05-08T17:30:07Z
+46774,CELERY NAKED RPC,celery,1,Fresh from Meijer Pascal Celery,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T17:31:10Z
+46774,CELERY NAKED RPC,celery,2,Fresh from Meijer Pascal Celery,,,,,,ok-dom,2026-05-08,2026-05-08T17:31:10Z
+46774,CELERY NAKED RPC,celery,3,Original price,$2.49,,,,,ok-dom,2026-05-08,2026-05-08T17:31:10Z
+46774,POTATOES IDAHO BAKER,idaho baker potato,1,Russet Potatoes Tray Pack 4 CT,$3.99,4 CT,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:31:59Z
+46774,POTATOES IDAHO BAKER,idaho baker potato,2,Russet Potatoes Tray Pack 4 CT,,4 CT,,,,ok-dom,2026-05-08,2026-05-08T17:31:59Z
+46774,POTATOES IDAHO BAKER,idaho baker potato,3,Original price,$3.99,,,,,ok-dom,2026-05-08,2026-05-08T17:31:59Z
+46774,ASPARAGUS STANDARD 11LB,asparagus,1,Green Asparagus,$4.99,1.25 lb,$3.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:32:49Z
+46774,ASPARAGUS STANDARD 11LB,asparagus,2,Green Asparagus,,,,,,ok-dom,2026-05-08,2026-05-08T17:32:49Z
+46774,ASPARAGUS STANDARD 11LB,asparagus,3,Original price,$4.99,,,,,ok-dom,2026-05-08,2026-05-08T17:32:49Z
+46774,ONIONS RED JUMBO CTN 40#,red onion,1,Red Onion,$1.86,1.86 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:33:38Z
+46774,ONIONS RED JUMBO CTN 40#,red onion,2,Red Onion,,,,,,ok-dom,2026-05-08,2026-05-08T17:33:38Z
+46774,ONIONS RED JUMBO CTN 40#,red onion,3,Original price,$1.86,1.86 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:33:38Z
+46774,TOMATOES ROMA LUG,roma tomato,1,Roma Tomato Extra Large,$0.60,0.60 each,$2.39,/lb,,ok-dom,2026-05-08,2026-05-08T17:34:27Z
+46774,TOMATOES ROMA LUG,roma tomato,2,Roma Tomato Extra Large,,,,,,ok-dom,2026-05-08,2026-05-08T17:34:27Z
+46774,TOMATOES ROMA LUG,roma tomato,3,Original price,$0.60,0.60 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:34:27Z
+46774,ONIONS YELLOW JUMBO 1015,sweet onion,1,Sweet Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:35:16Z
+46774,ONIONS YELLOW JUMBO 1015,sweet onion,2,Sweet Onion,,,,,,ok-dom,2026-05-08,2026-05-08T17:35:16Z
+46774,ONIONS YELLOW JUMBO 1015,sweet onion,3,Original price,$1.49,1.49 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:35:16Z
+46774,PEPPERS JALAPENO,jalapeno pepper,1,Jalapeno Pepper,$0.30,0.30 each,$1.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:36:05Z
+46774,PEPPERS JALAPENO,jalapeno pepper,2,Jalapeno Pepper,,,,,,ok-dom,2026-05-08,2026-05-08T17:36:05Z
+46774,PEPPERS JALAPENO,jalapeno pepper,3,Original price,$0.30,0.30 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:36:05Z
+46774,CILANTRO VALUE,cilantro,1,"Cilantro, bunch",$0.89,,,,,ok-dom,2026-05-08,2026-05-08T17:36:55Z
+46774,CILANTRO VALUE,cilantro,2,"Cilantro, bunch",,,,,,ok-dom,2026-05-08,2026-05-08T17:36:55Z
+46774,CILANTRO VALUE,cilantro,3,Original price,$0.89,,,,,ok-dom,2026-05-08,2026-05-08T17:36:55Z
+46774,APPLES FUJI POLY,fuji apples,1,"Fuji Apples, 3 lb",$3.29,3 lb,$1.10,/lb,,ok-dom,2026-05-08,2026-05-08T17:37:44Z
+46774,APPLES FUJI POLY,fuji apples,2,"Fuji Apples, 3 lb",,3 lb,,,,ok-dom,2026-05-08,2026-05-08T17:37:44Z
+46774,APPLES FUJI POLY,fuji apples,3,Original price,$3.29,,,,,ok-dom,2026-05-08,2026-05-08T17:37:44Z
+46774,APL COSMIC CRSP BAG,cosmic crisp apples,1,Cosmic Crisp Apple,$1.49,1.49 each,$1.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:38:33Z
+46774,APL COSMIC CRSP BAG,cosmic crisp apples,2,Cosmic Crisp Apple,,,,,,ok-dom,2026-05-08,2026-05-08T17:38:33Z
+46774,APL COSMIC CRSP BAG,cosmic crisp apples,3,Original price,$1.49,1.49 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:38:33Z
+46774,CLASSIC GARDEN SALAD,garden salad,1,"Dole Salad Garden, 12 oz",$2.29,12 oz,$3.05,/lb,,ok-dom,2026-05-08,2026-05-08T17:39:22Z
+46774,CLASSIC GARDEN SALAD,garden salad,2,"Dole Salad Garden, 12 oz",,12 oz,,,,ok-dom,2026-05-08,2026-05-08T17:39:22Z
+46774,CLASSIC GARDEN SALAD,garden salad,3,Original price,$2.29,,,,,ok-dom,2026-05-08,2026-05-08T17:39:22Z
+46774,SHRD ICEBERG LETTUCE,shredded iceberg lettuce,1,"Dole Salad Shredded Lettuce, 8 oz",$2.29,8 oz,$4.58,/lb,,ok-dom,2026-05-08,2026-05-08T17:40:11Z
+46774,SHRD ICEBERG LETTUCE,shredded iceberg lettuce,2,"Dole Salad Shredded Lettuce, 8 oz",,8 oz,,,,ok-dom,2026-05-08,2026-05-08T17:40:11Z
+46774,SHRD ICEBERG LETTUCE,shredded iceberg lettuce,3,Original price,$2.29,,,,,ok-dom,2026-05-08,2026-05-08T17:40:11Z
+46774,CUTPEELED BBY CARROT,baby carrots,1,"Fresh from Meijer Baby-Cut Carrots, 1 lb.",$1.39,1 lb,$1.39,/lb,,ok-dom,2026-05-08,2026-05-08T17:41:00Z
+46774,CUTPEELED BBY CARROT,baby carrots,2,"Fresh from Meijer Baby-Cut Carrots, 1 lb.",,1 lb,,,,ok-dom,2026-05-08,2026-05-08T17:41:00Z
+46774,CUTPEELED BBY CARROT,baby carrots,3,Original price,$1.39,,,,,ok-dom,2026-05-08,2026-05-08T17:41:00Z
+46774,ONIONS WHITE JUMBO BULK,white onion,1,White Onion,$1.49,1.49 each,$1.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:41:49Z
+46774,ONIONS WHITE JUMBO BULK,white onion,2,White Onion,,,,,,ok-dom,2026-05-08,2026-05-08T17:41:49Z
+46774,ONIONS WHITE JUMBO BULK,white onion,3,Original price,$1.49,1.49 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:41:49Z
+46774,CABBAGE GREEN MEDIUM RPC,green cabbage,1,"Green Cabbage, lb",$2.23,2.23 each,$0.89,/lb,,ok-dom,2026-05-08,2026-05-08T17:42:38Z
+46774,CABBAGE GREEN MEDIUM RPC,green cabbage,2,"Green Cabbage, lb",,,,,,ok-dom,2026-05-08,2026-05-08T17:42:38Z
+46774,CABBAGE GREEN MEDIUM RPC,green cabbage,3,Original price,$2.23,2.23 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:42:38Z
+46774,CUCUMBERS,cucumber,1,Seedless English Greenhouse Cucumber,$0.88,,,,,ok-dom,2026-05-08,2026-05-08T17:43:27Z
+46774,CUCUMBERS,cucumber,2,Seedless English Greenhouse Cucumber,,,,,,ok-dom,2026-05-08,2026-05-08T17:43:27Z
+46774,CUCUMBERS,cucumber,3,Sale price,$0.88,,,,,ok-dom,2026-05-08,2026-05-08T17:43:27Z
+46774,APPLES GALA EURO 50 CT,gala apples,1,"Gala Apples, 3 lb",$4.39,3 lb,$1.46,/lb,,ok-dom,2026-05-08,2026-05-08T17:44:16Z
+46774,APPLES GALA EURO 50 CT,gala apples,2,"Gala Apples, 3 lb",,3 lb,,,,ok-dom,2026-05-08,2026-05-08T17:44:16Z
+46774,APPLES GALA EURO 50 CT,gala apples,3,Original price,$4.39,,,,,ok-dom,2026-05-08,2026-05-08T17:44:16Z
+46774,GRAPES WHITE SDLS BAG,green seedless grapes,1,Green Seedless Grapes,$7.48,2.5 lb,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:45:05Z
+46774,GRAPES WHITE SDLS BAG,green seedless grapes,2,Green Seedless Grapes,,,,,,ok-dom,2026-05-08,2026-05-08T17:45:05Z
+46774,GRAPES WHITE SDLS BAG,green seedless grapes,3,Original price,$7.48,,,,,ok-dom,2026-05-08,2026-05-08T17:45:05Z
+46774,GRAPES RED SDLS BAG,red seedless grapes,1,"Red Seedless Grapes, Bag",$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T17:45:54Z
+46774,GRAPES RED SDLS BAG,red seedless grapes,2,"Red Seedless Grapes, Bag",,,,,,ok-dom,2026-05-08,2026-05-08T17:45:54Z
+46774,GRAPES RED SDLS BAG,red seedless grapes,3,Original price,$6.98,,,,,ok-dom,2026-05-08,2026-05-08T17:45:54Z
+46774,GRAPES BLACK SDLS BAG,black seedless grapes,1,Black Seedless Grapes,$6.98,2.5 lb,$2.79,/lb,,ok-dom,2026-05-08,2026-05-08T17:46:43Z
+46774,GRAPES BLACK SDLS BAG,black seedless grapes,2,Black Seedless Grapes,,,,,,ok-dom,2026-05-08,2026-05-08T17:46:43Z
+46774,GRAPES BLACK SDLS BAG,black seedless grapes,3,Original price,$6.98,,,,,ok-dom,2026-05-08,2026-05-08T17:46:43Z
+46774,PEPPERS BELL GREEN RPC,green bell pepper,1,Green Bell Pepper,$1.29,,,,,ok-dom,2026-05-08,2026-05-08T17:47:33Z
+46774,PEPPERS BELL GREEN RPC,green bell pepper,2,Green Bell Pepper,,,,,,ok-dom,2026-05-08,2026-05-08T17:47:33Z
+46774,PEPPERS BELL GREEN RPC,green bell pepper,3,Original price,$1.29,,,,,ok-dom,2026-05-08,2026-05-08T17:47:33Z
+46774,POTATOES RUSSET,russet potatoes,1,"Russet Potatoes, 5 lb",$3.69,5 lb,$0.74,/lb,,ok-dom,2026-05-08,2026-05-08T17:48:22Z
+46774,POTATOES RUSSET,russet potatoes,2,"Russet Potatoes, 5 lb",,5 lb,,,,ok-dom,2026-05-08,2026-05-08T17:48:22Z
+46774,POTATOES RUSSET,russet potatoes,3,Original price,$3.69,,,,,ok-dom,2026-05-08,2026-05-08T17:48:22Z
+46774,PEPPERS RED BELL,red bell pepper,1,Red Bell Pepper,$1.59,,,,,ok-dom,2026-05-08,2026-05-08T17:49:11Z
+46774,PEPPERS RED BELL,red bell pepper,2,Red Bell Pepper,,,,,,ok-dom,2026-05-08,2026-05-08T17:49:11Z
+46774,PEPPERS RED BELL,red bell pepper,3,Original price,$1.59,,,,,ok-dom,2026-05-08,2026-05-08T17:49:11Z
+46774,TOMATOES HYDROPONIC,hydroponic tomato,1,Greenhouse Tomato,$1.29,1.29 each,$3.49,/lb,,ok-dom,2026-05-08,2026-05-08T17:50:01Z
+46774,TOMATOES HYDROPONIC,hydroponic tomato,2,Greenhouse Tomato,,,,,,ok-dom,2026-05-08,2026-05-08T17:50:01Z
+46774,TOMATOES HYDROPONIC,hydroponic tomato,3,Original price,$1.29,1.29 each,$1.00,/ea,,ok-dom,2026-05-08,2026-05-08T17:50:01Z
+46774,ONIONS GREEN ICLS BAG RPC,green onions,1,Green Onion Bunch,$1.09,,,,,ok-dom,2026-05-08,2026-05-08T17:50:50Z
+46774,ONIONS GREEN ICLS BAG RPC,green onions,2,Green Onion Bunch,,,,,,ok-dom,2026-05-08,2026-05-08T17:50:50Z
+46774,ONIONS GREEN ICLS BAG RPC,green onions,3,Original price,$1.09,,,,,ok-dom,2026-05-08,2026-05-08T17:50:50Z
+46774,TOMATOES BUNCHED,tomatoes on the vine,1,Tomatoes on the Vine,$4.04,1.5 lb,$2.69,/lb,,ok-dom,2026-05-08,2026-05-08T17:51:39Z
+46774,TOMATOES BUNCHED,tomatoes on the vine,2,Tomatoes on the Vine,,,,,,ok-dom,2026-05-08,2026-05-08T17:51:39Z
+46774,TOMATOES BUNCHED,tomatoes on the vine,3,Original price,$4.04,,,,,ok-dom,2026-05-08,2026-05-08T17:51:39Z
+46774,STRAWBERRIES,strawberries,1,"Strawberries, 16 oz",$2.99,16 oz,$2.99,/lb,,ok-dom,2026-05-08,2026-05-08T17:52:28Z
+46774,STRAWBERRIES,strawberries,2,"Strawberries, 16 oz",,16 oz,,,,ok-dom,2026-05-08,2026-05-08T17:52:28Z
+46774,STRAWBERRIES,strawberries,3,Original price,$2.99,,,,,ok-dom,2026-05-08,2026-05-08T17:52:28Z
