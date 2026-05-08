@@ -52,7 +52,8 @@ python scraper.py --zip 49503 --headed --debug
 
 | flag              | default       | description                                          |
 | ----------------- | ------------- | ---------------------------------------------------- |
-| `--zip`           | (required)    | ZIP code used for store selection                    |
+| `--zip`           | —             | Single ZIP code for store selection                  |
+| `--zips`          | —             | Comma-separated list of ZIPs (e.g. `45238,43228,48228`); fresh browser context per zip |
 | `--input`         | `queries.csv` | CSV with columns `trade_name,search_query`           |
 | `--output`        | `results.csv` | Output CSV path                                      |
 | `--query`         | —             | Run a single ad-hoc query instead of reading `--input` |
@@ -69,12 +70,15 @@ python scraper.py --zip 49503 --headed --debug
 ### Common recipes
 
 ```bash
-# Top-3 results per query, snapshot to date-stamped file + history.csv
+# Single zip, top-3 results, daily snapshot + history
 python scraper.py --zip 43228 --top-n 3 --snapshot
 
-# Schedule daily (Windows Task Scheduler):
-#   python scraper.py --zip 43228 --top-n 3 --snapshot
-# Over time, history.csv accumulates one row per (date, query, rank).
+# Multiple zips in one run (each gets its own fresh browser context).
+# Output rows are tagged with their zip_code, so a single CSV holds all zips.
+python scraper.py --zips 45238,43228,48228,46227,40214 --top-n 3 --snapshot
+
+# Schedule daily (Windows Task Scheduler) — same multi-zip command.
+# Over time, history.csv accumulates one row per (date, zip, query, rank).
 ```
 
 ## queries.csv format

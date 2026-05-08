@@ -62,6 +62,7 @@ UNIT_PRICE_PAREN_RE = re.compile(
 
 @dataclass
 class Result:
+    zip_code: str
     trade_name: str
     search_query: str
     rank: int
@@ -663,6 +664,58 @@ async def _dom_top_results(page: Page, top_n: int, debug: bool) -> list[dict]:
 # -- Driver ------------------------------------------------------------------
 
 
+def _parse_zips(args: argparse.Namespace) -> list[str]:
+    if args.zips:
+        zs = [z.strip() for z in args.zips.split(",") if z.strip()]
+        return zs
+    if args.zip:
+        return [args.zip.strip()]
+    return []
+
+
+def _append_history(path: Path, results: list[Result],
+                    fieldnames: list[str]) -> None:
+    """Append rows to a rolling history CSV. If the existing file's header
+    doesn't match the current schema, back it up to <name>.bak and rewrite
+    with the new schema (filling missing columns with empty values)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.exists():
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=fieldnames)
+            w.writeheader()
+            for r in results:
+                w.writerow(asdict(r))
+        return
+
+    with open(path, "r", newline="", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        existing_header = next(reader, [])
+
+    if existing_header == fieldnames:
+        with open(path, "a", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=fieldnames)
+            for r in results:
+                w.writerow(asdict(r))
+        return
+
+    # Schema migration: read all old rows, back up the file, rewrite under
+    # the new schema with missing fields filled in.
+    with open(path, "r", newline="", encoding="utf-8") as f:
+        old_rows = list(csv.DictReader(f))
+    backup = path.with_suffix(path.suffix + ".bak")
+    if backup.exists():
+        backup.unlink()
+    path.rename(backup)
+    print(f"  [history] schema changed — old file backed up to {backup}")
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        for row in old_rows:
+            w.writerow({k: row.get(k, "") for k in fieldnames})
+        for r in results:
+            w.writerow(asdict(r))
+
+
 async def run(args: argparse.Namespace) -> int:
     queries: list[tuple[str, str]] = []
     if args.query:
@@ -683,10 +736,13 @@ async def run(args: argparse.Namespace) -> int:
         print("no queries to run", file=sys.stderr)
         return 2
 
+    zips = _parse_zips(args)
+    if not zips:
+        print("must provide --zip or --zips", file=sys.stderr)
+        return 2
+
     today = datetime.now().strftime("%Y-%m-%d")
     if args.snapshot:
-        # In snapshot mode: write a date-stamped file under snapshots/ (unless
-        # the user explicitly overrode --output) and append to history.csv.
         if args.output == "results.csv":  # default — auto-stamp it
             out_path = Path("snapshots") / f"results-{today}.csv"
         else:
@@ -703,74 +759,90 @@ async def run(args: argparse.Namespace) -> int:
         if args.channel:
             launch_kwargs["channel"] = args.channel
         browser = await pw.chromium.launch(**launch_kwargs)
-        context: BrowserContext = await browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            ),
-            viewport={"width": 1366, "height": 900},
-            locale="en-US",
-        )
-        page = await context.new_page()
-
-        ok = await set_store_by_zip(page, args.zip, debug=args.debug)
-        if not ok and args.strict_store:
-            print("[fatal] could not set store; aborting", file=sys.stderr)
-            await browser.close()
-            return 3
 
         results: list[Result] = []
-        for trade, q in queries:
-            print(f"[search] {trade!r} -> {q!r}")
-            try:
-                rs = await search_top_results(
-                    page, q, top_n=args.top_n, debug=args.debug,
-                    dump_payloads=args.dump_payloads,
-                )
-            except Exception as e:
-                rs = [{
-                    "name": "", "price": "", "size": "",
-                    "unit_price": "", "unit_price_basis": "",
-                    "url": SEARCH_URL_TMPL.format(query=q.replace(" ", "+")),
-                    "status": f"error:{type(e).__name__}",
-                }]
-                print(f"  [error] {type(e).__name__}: {e}")
-                # If the page or browser died, try to recover by opening a
-                # fresh page in the same context (cookies/store persist).
+        for zi, zip_code in enumerate(zips, start=1):
+            print(f"\n=== ZIP {zip_code}  ({zi}/{len(zips)}) ===")
+            # Fresh context per zip so the previous store cookie/localStorage
+            # doesn't leak into the next zip's session.
+            context: BrowserContext = await browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/124.0.0.0 Safari/537.36"
+                ),
+                viewport={"width": 1366, "height": 900},
+                locale="en-US",
+            )
+            page = await context.new_page()
+
+            ok = await set_store_by_zip(page, zip_code, debug=args.debug)
+            if not ok:
+                msg = f"[skip] zip {zip_code} — store selection failed"
+                print(msg, file=sys.stderr)
+                if args.strict_store:
+                    await context.close()
+                    await browser.close()
+                    return 3
+                await context.close()
+                continue
+
+            for trade, q in queries:
+                print(f"[search] {trade!r} -> {q!r}")
                 try:
-                    if page.is_closed():
-                        page = await context.new_page()
+                    rs = await search_top_results(
+                        page, q, top_n=args.top_n, debug=args.debug,
+                        dump_payloads=args.dump_payloads,
+                    )
+                except Exception as e:
+                    rs = [{
+                        "name": "", "price": "", "size": "",
+                        "unit_price": "", "unit_price_basis": "",
+                        "url": SEARCH_URL_TMPL.format(query=q.replace(" ", "+")),
+                        "status": f"error:{type(e).__name__}",
+                    }]
+                    print(f"  [error] {type(e).__name__}: {e}")
+                    try:
+                        if page.is_closed():
+                            page = await context.new_page()
+                    except Exception:
+                        pass
+                ts = (datetime.now(timezone.utc).isoformat(timespec="seconds")
+                      .replace("+00:00", "Z"))
+                for rank, r in enumerate(rs, start=1):
+                    results.append(Result(
+                        zip_code=zip_code,
+                        trade_name=trade,
+                        search_query=q,
+                        rank=rank,
+                        matched_name=r.get("name", ""),
+                        price=r.get("price", ""),
+                        size=r.get("size", ""),
+                        unit_price=r.get("unit_price", ""),
+                        unit_price_basis=r.get("unit_price_basis", ""),
+                        url=r.get("url", ""),
+                        status=r.get("status", ""),
+                        date=today,
+                        timestamp=ts,
+                    ))
+                    up = r.get("unit_price", "")
+                    up_b = r.get("unit_price_basis", "")
+                    up_s = f" ({up}{up_b})" if up else ""
+                    print(f"  #{rank} -> {r.get('status','')}: "
+                          f"{r.get('name','')!r} {r.get('price','')} "
+                          f"{r.get('size','')}{up_s}")
+                try:
+                    await page.wait_for_timeout(int(args.delay * 1000))
                 except Exception:
                     pass
-            ts = (datetime.now(timezone.utc).isoformat(timespec="seconds")
-                  .replace("+00:00", "Z"))
-            for rank, r in enumerate(rs, start=1):
-                results.append(Result(
-                    trade_name=trade,
-                    search_query=q,
-                    rank=rank,
-                    matched_name=r.get("name", ""),
-                    price=r.get("price", ""),
-                    size=r.get("size", ""),
-                    unit_price=r.get("unit_price", ""),
-                    unit_price_basis=r.get("unit_price_basis", ""),
-                    url=r.get("url", ""),
-                    status=r.get("status", ""),
-                    date=today,
-                    timestamp=ts,
-                ))
-                up = r.get("unit_price", "")
-                up_b = r.get("unit_price_basis", "")
-                up_s = f" ({up}{up_b})" if up else ""
-                print(f"  #{rank} -> {r.get('status','')}: {r.get('name','')!r} "
-                      f"{r.get('price','')} {r.get('size','')}{up_s}")
-            try:
-                await page.wait_for_timeout(int(args.delay * 1000))
-            except Exception:
-                pass
+
+            await context.close()
 
         await browser.close()
+
+    if not results:
+        print("no results to write", file=sys.stderr)
+        return 1
 
     fieldnames = list(asdict(results[0]).keys())
     with open(out_path, "w", newline="", encoding="utf-8") as f:
@@ -784,14 +856,7 @@ async def run(args: argparse.Namespace) -> int:
 
     if args.snapshot:
         hist_path = Path(args.history_file)
-        hist_path.parent.mkdir(parents=True, exist_ok=True)
-        new_file = not hist_path.exists()
-        with open(hist_path, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            if new_file:
-                writer.writeheader()
-            for r in results:
-                writer.writerow(asdict(r))
+        _append_history(hist_path, results, fieldnames)
         print(f"appended {len(results)} rows to {hist_path}")
 
     return 0
@@ -799,7 +864,10 @@ async def run(args: argparse.Namespace) -> int:
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Scrape Meijer.com produce prices by zip code.")
-    p.add_argument("--zip", required=True, help="ZIP code to use for store selection")
+    p.add_argument("--zip", help="Single ZIP code for store selection")
+    p.add_argument("--zips",
+                   help="Comma-separated list of ZIPs to scrape sequentially "
+                        "(e.g. '45238,43228,48228'). Overrides --zip.")
     p.add_argument("--input", default="queries.csv",
                    help="CSV with columns trade_name,search_query (default: queries.csv)")
     p.add_argument("--output", default="results.csv", help="Output CSV path")
